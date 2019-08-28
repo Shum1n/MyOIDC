@@ -20,7 +20,7 @@ public abstract class AbstractDomain implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    protected int id;
+    protected long id;
 
     @Column(name = "archived", columnDefinition = "tinyint(1)")
     protected boolean archived;
@@ -42,18 +42,17 @@ public abstract class AbstractDomain implements Serializable {
      * The domain create time.
      */
     @Column(name = "create_time")
-//    @Type(type = "org.hibernate.type.TimestampType")
     protected Date createTime = new Date();
 
 
     public AbstractDomain() {
     }
 
-    public int id() {
+    public long id() {
         return id;
     }
 
-    public void id(int id) {
+    public void id(long id) {
         this.id = id;
     }
 

@@ -4,6 +4,7 @@ import org.springframework.context.ApplicationContext;
 
 /**
  * @author Shengzhao Li
+ * @since 1.1.0
  */
 public abstract class BeanProvider {
 

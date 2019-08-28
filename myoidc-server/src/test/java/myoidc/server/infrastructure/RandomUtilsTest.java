@@ -1,32 +1,32 @@
 package myoidc.server.infrastructure;
 
-
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 /**
+ * 2019/8/28
+ *
  * @author Shengzhao Li
  */
 public class RandomUtilsTest {
 
+
     @Test
-    public void testRandomText() throws Exception {
+    public void randomText() throws Exception {
 
-        final String random = RandomUtils.randomText();
-        assertNotNull(random);
-        assertEquals(random.length(), 32);
-//        System.out.println(random);
+        String s = RandomUtils.randomText();
 
+        assertNotNull(s);
+        assertTrue(s.length() > 1);
     }
 
     @Test
-    public void testRandomNumber() throws Exception {
+    public void randomNumber() throws Exception {
 
-        final String number = RandomUtils.randomNumber();
-        assertNotNull(number);
-        assertEquals(number.length(), 32);
-//        System.out.println(number);
-
+        String s = RandomUtils.randomNumber();
+        assertNotNull(s);
+        assertTrue(s.length() > 2);
     }
+
 }

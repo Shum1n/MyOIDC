@@ -1,0 +1,25 @@
+
+
+Base on  OpenID-Connect-Java-Spring-Server
+
+
+操作步骤：
+
+1. 访问 http://localhost:8087/server/.well-known/openid-configuration  获取配置支持信息
+
+2.访问 http://localhost:8087/server/jwk 获取 JWK信息
+
+3.
+
+4.
+
+
+
+
+SQL执行顺序
+mysql_database_tables.sql
+security-schema.sql
+mysql_database_index.sql
+clients.sql
+users.sql
+scopes.sql

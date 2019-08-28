@@ -5,6 +5,7 @@ import org.apache.commons.lang.RandomStringUtils;
 
 /**
  * @author Shengzhao Li
+ * @since 1.0.0
  */
 public abstract class UUIDGenerator {
 

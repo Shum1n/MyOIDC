@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:task="http://www.springframework.org/schema/task" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+    <!-- Root Context: defines shared resources visible to all other web components -->
+    <!-- For the autowired Classes -->
+    <context:annotation-config/>
+    <context:component-scan base-package="org.mitre,myoidc.server"/>
+
+
+    <!-- property configuration -->
+    <bean id="properties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations">
+            <list>
+                <value>classpath:myoidc-server.properties</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties" ref="properties"/>
+    </bean>
+
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+
+    <bean id="configBean" class="org.mitre.openid.connect.config.ConfigurationPropertiesBean">
+
+        <!-- This property sets the root URL of the server, known as the issuer -->
+        <property name="issuer" value="${oidc.issuer}"/>
+
+        <!-- This property is a URL pointing to a logo image 24px high to be used in the top bar -->
+        <property name="logoImageUrl" value="resources/images/openid_connect_small.png"/>
+
+        <!-- This property sets the display name of the server, displayed in the topbar and page title -->
+        <property name="topbarTitle" value="${oidc.topbarTitle}"/>
+
+        <!-- This property sets the lifetime of registration access tokens, in seconds. Leave it unset (null) for no rotation. -->
+        <!-- <property name="regTokenLifeTime" value="172800" /> -->
+
+        <!-- This property forces the issuer value to start with "https", recommended on production servers -->
+        <!-- <property name="forceHttps" value="true" /> -->
+
+        <!-- This property sets the locale for server text -->
+         <property name="locale" value="zh_CN" />
+
+        <!-- This property sets the set of namespaces for language translation files. The default is "messages". These are checked in the order presented here. -->
+        <!--
+        <property name="languageNamespaces">
+            <list>
+                <value>foo</value>
+                <value>bar</value>
+                <value>messages</value>
+            </list>
+        </property>
+        -->
+
+        <!-- This property indicates if a dynamically registered client supports dual flows, such as client_credentials
+        at the same time with authorization_code or implicit -->
+        <!-- <property name="dualClient" value="true" /> -->
+
+        <!-- This property turns on HEART compliance mode -->
+        <!-- <property name="heartMode" value="true" /> -->
+
+        <!-- This property allows the server to create and accept fully-composed
+        user URIs (with the user-code emebedded) for the device flow -->
+        <!-- <property name="allowCompleteDeviceCodeUri" value="true" /> -->
+
+    </bean>
+
+
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <!-- 		<property name="jdbcUrl" value="jdbc:hsqldb:file:/tmp/oic;sql.syntax_mys=true" /> -->
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter">
+        <property name="databasePlatform" value="org.eclipse.persistence.platform.database.MySQLPlatform"/>
+        <property name="showSql" value="${jpa.show_sql}"/>
+    </bean>
+
+
+    <!--   Locale  -->
+    <bean id="messageSource" class="org.mitre.openid.connect.config.JsonMessageSource">
+        <property name="baseDirectory" value="/resources/js/locale/"/>
+        <property name="useCodeAsDefaultMessage" value="true"/>
+    </bean>
+
+    <bean id="localeResolver" class="org.mitre.openid.connect.config.ConfigurationBeanLocaleResolver"/>
+
+
+    <!-- validate incoming tokens for JWT assertions -->
+    <bean id="jwtAssertionValidator" class="org.mitre.jwt.assertion.impl.NullAssertionValidator"/>
+
+    <!-- translate incoming assertions to token authorization objects -->
+    <bean id="jwtAssertionTokenFactory" class="org.mitre.oauth2.assertion.impl.DirectCopyRequestFactory"/>
+
+    <!-- validate client software statements for dynamic registration -->
+    <!-- 	<bean id="clientAssertionValidator" class="org.mitre.jwt.assertion.impl.NullAssertionValidator" /> -->
+
+    <!-- this class will pass assertions signed by the issuers and keys in the whitelist -->
+    <bean id="clientAssertionValidator" class="org.mitre.jwt.assertion.impl.WhitelistedIssuerAssertionValidator">
+        <property name="whitelist">
+            <map>
+                <!--<entry key="http://oidc.local" value="http://localhost:8087/server/jwk"/>-->
+            </map>
+        </property>
+    </bean>
+
+    <!--<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">-->
+    <!--<property name="dataSource" ref="dataSource"/>-->
+    <!--</bean>-->
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+        <qualifier value="defaultTransactionManager"/>
+    </bean>
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="packagesToScan" value="org.mitre"/>
+        <property name="persistenceProviderClass" value="org.eclipse.persistence.jpa.PersistenceProvider"/>
+        <property name="dataSource" ref="dataSource"/>
+        <property name="jpaVendorAdapter" ref="jpaAdapter"/>
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="eclipselink.weaving" value="false"/>
+                <entry key="eclipselink.logging.level" value="INFO"/>
+                <entry key="eclipselink.logging.level.sql" value="INFO"/>
+                <entry key="eclipselink.cache.shared.default" value="false"/>
+            </map>
+        </property>
+        <property name="persistenceUnitName" value="defaultPersistenceUnit"/>
+        <!-- uncomment for Oracle -->
+        <!--<property name="mappingResources" value="db/oracle/entity-mappings_oracle.xml" />-->
+    </bean>
+
+
+    <bean id="defaultKeyStore" class="org.mitre.jose.keystore.JWKSetKeyStore">
+        <property name="location" value="classpath:keystore.jwks"/>
+    </bean>
+
+    <bean id="defaultsignerService" class="org.mitre.jwt.signer.service.impl.DefaultJWTSigningAndValidationService">
+        <constructor-arg name="keyStore" ref="defaultKeyStore"/>
+        <property name="defaultSignerKeyId" value="${default.signing.keyid}"/>
+        <property name="defaultSigningAlgorithmName" value="${default.signing.alg}"/>
+    </bean>
+
+    <bean id="defaultEncryptionService"
+          class="org.mitre.jwt.encryption.service.impl.DefaultJWTEncryptionAndDecryptionService">
+        <constructor-arg name="keyStore" ref="defaultKeyStore"/>
+        <property name="defaultAlgorithm" value="RSA1_5"/>
+        <property name="defaultDecryptionKeyId" value="${default.signing.keyid}"/>
+        <property name="defaultEncryptionKeyId" value="${default.signing.keyid}"/>
+    </bean>
+
+
+    <!-- Configuration for scheduled tasks -->
+    <task:scheduler id="taskScheduler" pool-size="10"/>
+    <task:executor id="taskExecutor" pool-size="5"/>
+    <task:annotation-driven scheduler="taskScheduler" executor="taskExecutor"/>
+
+    <!-- Schedule the token service and approved site service to clear out expired tokens and sites every 5 minutes -->
+    <task:scheduled-tasks scheduler="taskScheduler">
+        <task:scheduled ref="defaultOAuth2ProviderTokenService" method="clearExpiredTokens" fixed-delay="300000"
+                        initial-delay="600000"/>
+        <task:scheduled ref="defaultApprovedSiteService" method="clearExpiredSites" fixed-delay="300000"
+                        initial-delay="600000"/>
+        <task:scheduled ref="defaultOAuth2AuthorizationCodeService" method="clearExpiredAuthorizationCodes"
+                        fixed-delay="300000" initial-delay="600000"/>
+        <task:scheduled ref="defaultDeviceCodeService" method="clearExpiredDeviceCodes" fixed-delay="300000"
+                        initial-delay="600000"/>
+    </task:scheduled-tasks>
+
+
+    <bean class="org.mitre.openid.connect.config.UIConfiguration" id="uiConfiguration">
+        <property name="jsFiles">
+            <set>
+                <value>resources/js/client.js</value>
+                <value>resources/js/grant.js</value>
+                <value>resources/js/scope.js</value>
+                <value>resources/js/whitelist.js</value>
+                <value>resources/js/dynreg.js</value>
+                <value>resources/js/rsreg.js</value>
+                <value>resources/js/token.js</value>
+                <value>resources/js/blacklist.js</value>
+                <value>resources/js/profile.js</value>
+            </set>
+        </property>
+
+    </bean>
+
+
+</beans>
+

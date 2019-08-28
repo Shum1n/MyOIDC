@@ -7,7 +7,6 @@ import myoidc.server.domain.shared.Repository;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.persistence.EntityManager;
@@ -18,6 +17,7 @@ import java.util.List;
 
 /**
  * @author Shengzhao Li
+ * @since 1.0.0
  */
 public abstract class AbstractRepositoryJpa<T> implements Repository, InitializingBean {
 
