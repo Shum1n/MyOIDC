@@ -4,7 +4,7 @@
 
 CREATE TABLE IF NOT EXISTS access_token (
 	id BIGINT AUTO_INCREMENT PRIMARY KEY,
-	token_value VARCHAR(4096),
+	token_value TEXT,
 	expiration TIMESTAMP NULL,
 	token_type VARCHAR(256),
 	refresh_token_id BIGINT,
