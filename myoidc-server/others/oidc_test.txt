@@ -1,0 +1,34 @@
+
+
+
+-- grant_type=authorization_code 流程
+
+
+1.发起登录 获取 code
+http://localhost:8087/server/authorize?client_id=client&client_secret=secret&scope=openid&redirect_uri=http://localhost:8080/&response_type=code
+
+响应：
+http://localhost:8080/?code=3Y5V3B
+
+
+2.换token
+http://localhost:8087/server/token?client_id=client&client_secret=secret&grant_type=authorization_code&scope=openid&code=3Y5V3B&redirect_uri=http://localhost:8080/
+
+响应：
+{
+    "access_token": "eyJraWQiOiJyc2ExIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJhZG1pbiIsImF6cCI6ImNsaWVudCIsImlzcyI6Imh0dHA6XC9cL2xvY2FsaG9zdDo4MDg3XC9zZXJ2ZXJcLyIsImV4cCI6MTU2NzA0OTQ2NCwiaWF0IjoxNTY3MDQ1ODY0LCJqdGkiOiIxODk2NmU0Zi1mZjg4LTQ1NzQtOWI0OC0xNzllMDg5MTBlMWQifQ.WeeZv6unQVqvSQVwtuZaKb-EXYXiC_ba3UyJyU125A8tudsyrFzQox4OAaM2zTyceTJHZhzObgSIHLAxkj7AB8k-KqyTJw3eGVQVoNm1ig0LTZ_K09Q87qiyPJAE-0Se89dZ7FqVkH4cEq-IgdSdnHutV6TYeBKBkS3JcbmuxCoGxl4HYL6XQKz3xVBOsz4RfHv2mWqJp7I-MI6pWiqtOuVt6BHGr3N9yO2Ey9Yv1eflbN3vMs1q130p1NsVaG0YdBbjXL8ZgeNm-Q-Hmfi5O2gWreplsokt_0niY_c8YCOee8QKOlaWePGyYyVQNidJmOAELMuBpLZd_bbJh_Df2A",
+    "token_type": "Bearer",
+    "expires_in": 3599
+}
+
+
+-- grant_type=implicit 流程
+
+1.发起登录认证
+http://localhost:8087/server/authorize?client_id=client&scope=email&redirect_uri=http://localhost:8080/&grant_type=implicit&response_type=token
+
+响应:
+http://localhost:8080/#access_token=eyJraWQiOiJyc2ExIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJhZG1pbiIsImF6cCI6ImNsaWVudCIsImlzcyI6Imh0dHA6XC9cL2xvY2FsaG9zdDo4MDg3XC9zZXJ2ZXJcLyIsImV4cCI6MTU2NzA1MDgyMiwiaWF0IjoxNTY3MDQ3MjIyLCJqdGkiOiI3Y2VhYzNlMi00YzhlLTRhMWUtYjFmMi05NjUwYWUxZTg5MmUifQ.eA5uvjJs1ZSzeq9-GmsE07yp1XW8ZxImjd7qG_xoeelgrwpNunv1t087uoPFA3mx9gD8QtEjZ9zePm_5rkM7N5cQdeWXWaW9K1P4FW49TATXsEhjTPfn6Ad8x9MOPY9xTJ5In9LY60De1gt52Iilkj8B1jf_cmA5ZRrt7B7m7DAD1n51HYvlJrIXDgFFqL0wcq94QXWofWzdZ6a7bOUnMw2szYUkEOG9sws8U-enc1Pkgv1QKtZnucjQPZEcPVK-87X6dIsin65bxoO8mdi4HZzI_q5J-7fm9994L3wFQlswWM_nmUsNiqkY4u2V6ZlSt2By8BVEXAECICMrHTdD5Q&token_type=Bearer&expires_in=3599&scope=
+
+
+
