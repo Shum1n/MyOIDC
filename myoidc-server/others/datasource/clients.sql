@@ -14,12 +14,12 @@ INSERT INTO client_details (client_id, client_secret, client_name, dynamically_r
 	('client', 'secret', 'Test Client', false, null, 3600, 600, true);
 
 INSERT INTO client_scope (owner_id, scope) VALUES
-	('client', 'openid'),
-	('client', 'profile'),
-	('client', 'email'),
-	('client', 'address'),
-	('client', 'phone'),
-	('client', 'offline_access');
+	(1, 'openid'),
+	(1, 'profile'),
+	(1, 'email'),
+	(1, 'address'),
+	(1, 'phone'),
+	(1, 'offline_access');
 
 INSERT INTO client_redirect_uri (owner_id, redirect_uri) VALUES
 	(1, 'http://localhost/'),
