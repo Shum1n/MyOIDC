@@ -263,11 +263,11 @@
     </dependencies>
 
 
-    <repositories>
-        <repository>
-            <id>basedir</id>
-            <url>file://${project.basedir}/lib/</url>
-        </repository>
-    </repositories>
+    <!--<repositories>-->
+        <!--<repository>-->
+            <!--<id>basedir</id>-->
+            <!--<url>file://${project.basedir}/lib/</url>-->
+        <!--</repository>-->
+    <!--</repositories>-->
 
 </project>
