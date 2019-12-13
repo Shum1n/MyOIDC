@@ -52,7 +52,7 @@ public class Jose4JTest {
         //加密
         JsonWebEncryption jwe = new JsonWebEncryption();
         jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
-        jwe.setEncryptionMethodHeaderParameter(ContentEncryptionAlgorithmIdentifiers.AES_256_CBC_HMAC_SHA_512);
+        jwe.setEncryptionMethodHeaderParameter(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
         PublicKey publicKey = RsaJsonWebKey.Factory.newPublicJwk(publicKeyString).getPublicKey();
         jwe.setKey(publicKey);
         jwe.setPayload(data);
